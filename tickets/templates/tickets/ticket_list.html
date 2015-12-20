@@ -1,19 +1,36 @@
 {% extends "tickets/tickets_base.html" %}
 
 {% load ticket_extras %}
+{% load static %}
 
 {% block title %} View Tickets - {% endblock %}
 
 
 {% block extra_head %}
 
- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<!-- bootstrap widget theme -->
+
 <!-- tablesorter plugin -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.15.14/jquery.tablesorter.js"></script>
 
 <!-- tablesorter widget file - loaded after the plugin -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.15.14/jquery.tablesorter.widgets.js"></script>
+
+<!-- <script type="text/javascript" src="/static/tablefilter/tablefilter.js"></script>  -->
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css">
+
+{% static "bootstrap-table.js" as bootstrap_table %}
+<script src="{{ bootstrap_table }}"></script>
+
+{% static "extensions/filter/bootstrap-table-filter.js" as filter %}
+<script src="{{ filter }}"></script>
+
+{% static "extensions/filter-control/bootstrap-table-filter-control.js" as filter_control %}
+<script src="{{ filter_control }}"></script>
+
+{% static "extensions/multiple-sort/bootstrap-table-multiple-sort.js" as multiple_sort %}
+<script src="{{ multiple_sort }}"></script>
 
 {% endblock %}
 
@@ -22,38 +39,41 @@
 
 <div class="container">
 
-  <table cellspacing="0" class="tablesorter">
+  <table id="mytable"
+         class="tablesorter"
+         data-toggle="table"
+         data-show-filter="true"
+         data-filter-control="true">
     <thead>
       <tr>
-	<th>Ticket</th>
-	<th>Status</th>
-	<th>Description</th>
-	<th>Application</th>
-	<th>Submitted By</th>
-	<th>Submitted On</th>
-	<th>Ticket Type</th>
-	<th>Priority</th>
-	<th>Votes</th>
-	<th>Assigned to</th>
+        <th data-field="id">Ticket</th>
+        <th data-field="status" data-sortable="false" data-filter-control="select">Status</th>
+        <th data-field="description" data-sortable="false" >Description</th>
+        <th data-field="application" data-sortable="false" data-filter-control="select">Application</th>
+        <th data-field="submitted_by" data-sortable="false" data-filter-control="select">Submitted By</th>
+        <th data-field="submitted_on" data-sortable="false" data-filter-control="select">Submitted On</th>
+        <th data-field="ticket_type" data-sortable="false" data-filter-control="select">Ticket Type</th>
+        <th data-field="priority" data-sortable="false" data-filter-control="select">Priority</th>
+        <th data-field="votes" data-sortable="false" data-filter-control="select">Votes</th>
+        <th data-field="assigned_to" data-sortable="false" data-filter-control="select">Assigned to</th>
       </tr>
     </thead>
     </tbody>
     {% for object in object_list %}
     <tr>
-      <td><a href="{{ object.get_absolute_url }}">{{object.id}}</a></td>
-      <td>{{object.status | status_btn }}</td>
-      <td><a href="{{ object.get_absolute_url }}">{{  object.name }}</a></td>
-      <td>{{object.application}}</td>
-      <td>{{object.submitted_by}}</td>
-      <td>{{object.created_on}}</td>
-      <td>{{object.ticket_type | ticket_type_btn }}</td>
+      <td><a href="{{ object.get_absolute_url }}">{{ object.id }}</a></td>
+      <td>{{ object.status | status_btn }}</td>
+      <td><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></td>
+      <td>{{ object.application }}</td>
+      <td>{{ object.submitted_by }}</td>
+      <td>{{ object.created_on }}</td>
+      <td>{{ object.ticket_type | ticket_type_btn }}</td>
 
-      <td>{{object.priority | priority_btn }}</td>
-      <td>{{object.votes}}</td>
+      <td>{{ object.priority | priority_btn }}</td>
+      <td>{{ object.votes }}</td>
       {% if object.assigned_to %}
       <td>{{ object.assigned_to }} </td>
       {% else %} <td>Nobody (yet)</td> {% endif %}
-
 
     </tr>
     {% endfor %}
@@ -64,7 +84,7 @@
 
 
 <script type="text/javascript">
-
+$(document).ready(function() {
  $(".tablesorter").tablesorter({
    theme: 'bootstrap',
    widthFixed: true,
@@ -78,9 +98,57 @@
      scroller_idPrefix: 's_'
    }
  });
+ });
 
 </script>
 
+
+<script type="text/javascript">
+
+
+
+//$('#mytable').bootstrapTable({
+//    columns: [{
+//        field: 'id',
+//        title: 'Item ID'
+//    }, {
+//        field: 'name',
+//        title: 'Item Name'
+//    }, {
+//        field: 'price',
+//        title: 'Item Price'
+//    }],
+//    data: [{
+//        id: 1,
+//        name: 'Item 1',
+//        price: '$1'
+//    }, {
+//        id: 2,
+//        name: 'Item 2',
+//        price: '$2'
+//    }]
+//});
+//
+
+
+//var tf_properties =  {
+//                    col_0: "none",
+//                    col_1: "select",
+//                    col_2: "none",
+//                    col_3: "select",
+//                    col_4: "select",
+//                    col_5: "none",
+//                    col_6: "select",
+//                    col_7: "select",
+//                    col_9: "select",
+//                    display_all_text: " [ Show all ] ",
+//                    sort_select: true
+//                };
+//var tf1 = new TableFilter('mytable', tf_properties);
+////var tf1 = setFilterGrid( "mytable",tf_properties );
+//
+//tf1.init();
+</script>
 
 
 {% endblock %}
