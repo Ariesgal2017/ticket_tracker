@@ -3,16 +3,9 @@
 <html>
   <head>
     <title>{% block title %}{% endblock %}Simple Ticket</title>
-    <!--     <link rel="stylesheet" href="{{ STATIC_URL }}style.css" type="text/css" media="screen" /> -->
-
 
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-
 
 
     {% block extra_head %}
@@ -22,7 +15,19 @@
 
   <body>
 
-    <nav class="navbar navbar-default" role="navigation">
+    <style type="text/css" media="screen">
+      .navbar-inverse .nav li.dropdown.open > .dropdown-toggle,
+      .navbar-inverse .nav li.dropdown.active > .dropdown-toggle,
+      .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle,
+      .navbar,
+      .navbar-inverse .navbar-inner {
+      filter: none;
+      background-image: none;
+      }
+    </style>
+
+
+    <header class="navbar navbar-default" role="navigation">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -31,7 +36,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Ticket Tracker</a>
+        <a class="navbar-brand" href="{% url 'ticket_list' %}">Ticket Tracker</a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
@@ -44,7 +49,6 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Filter <b class="caret"></b></a>
             <ul class="dropdown-menu">
-
               <li><a href="{% url 'ticket_list' %}">All Tickets</a></li>
               {% if user.id %}
               <li><a href="{% url 'my_ticket_list' user.id|default:-99 %}">My Tickets</a></li>
@@ -56,30 +60,66 @@
               <li><a href="{% url 'bug_reports' %}">Bug Reports</a></li>
               <li><a href="{% url 'feature_requests' %}">Feature Requests</a></li>
             </ul>
-            {% if user.is_staff %}
-            <li><a href="/admin/">Admin</a></li>
-            {% endif %}
+
+            {% block navbar_other_apps %}
+            {% endblock %}
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'change_password' %}">Change Password</a></li>
+              <li><a href="#">Add New Employee</a></li>
+              {% if user.is_staff %}
+              <li><a href="{% url 'admin:index' %}">Django Admin</a></li>
+              {% endif %}
+
+              {% if user.is_superuser %}
+              <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
+              {% endif %}
+
+            </ul>
+          </li>
           </li>
         </ul>
-        <form class="navbar-form navbar-left" role="search" action={% url 'ticket_list' %}>
-          <div class="form-group">
-            <input type="text" class="form-control" name="q" placeholder="Search Tickets">
-          </div>
-          <button type="submit" class="btn btn-default">Submit</button>
-        </form>
+        <div class="col-sm-3">
+            <form class="navbar-form navbar-left" role="search" action={% url 'ticket_list' %}>
+              <div class="input-group">
+                <input type="text" class="form-control" name="q" placeholder="Search Tickets">
+                  <div class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                      <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                  </div>
+                </div><!-- /input-group -->
+              </form>
+        </div>
         {% if user.is_authenticated %}
-        <p class="navbar-text">Welcome {{ user }}! </p>
+        <p class="navbar-text">Welcome
+            {% if user.first_name %}
+            {{ user.first_name }}!
+            {% else %}
+            {{ user.username }}!
+            {% endif %} </p>
         <p class="navbar-text"><a href="{% url 'logout' %}?next=/ticket">Logout</a> </p>
         {% else %}
         <p class="navbar-text"><a href="{% url 'login' %}">Login</a> </p>
         {% endif %}
       </div><!-- /.navbar-collapse -->
-    </nav>
+    </header>
 
 
     {% block content %}
     {% endblock%}
 
+
+    {% block javascript %}
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+    {% endblock%}
 
 
   </body>
