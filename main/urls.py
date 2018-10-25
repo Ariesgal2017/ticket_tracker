@@ -13,19 +13,19 @@ from tickets.views import TicketListView
 
 
 urlpatterns = [
-    #homepages
+    # homepages
     url(r'^$', TicketListView.as_view(), name='home'),
     url(r'^$', TicketListView.as_view(), name='index'),
 
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     url(r'^ticket/', include('tickets.urls')),
 
     url(r'^accounts/', include('simple_auth.urls')),
 ]
 
-#note - this doesn't work as it should, but we're moving on for now.
+ #note - this doesn't work as it should, but we're moving on for now.
 if settings.DEBUG:
     import debug_toolbar
 
